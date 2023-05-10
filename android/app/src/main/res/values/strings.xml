@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Venco</string>
+    <string name="venco_logo">venco_logo</string>
+    <string name="splash">splash</string>
+</resources>
