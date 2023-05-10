@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StatusBar, View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import * as Sentry from '@sentry/react-native';
+import { useSelector } from 'react-redux';
 
-import { Button, IconButton, Input } from '../shared';
+import { loginLoading, loginFailure } from '../../reducers/auth/login';
+import { loginUser } from '../../actions/auth/login';
+import { RootState } from '../../store';
+import { useAppDispatch } from '../../store/hooks';
+
+
+import { Button, IconButton, Input, Spinner } from '../shared';
 
 /**
  * Login Component.
@@ -16,18 +23,64 @@ import { Button, IconButton, Input } from '../shared';
  */
 const Login = (props: any):JSX.Element => {
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+
+  const dispatch = useAppDispatch();
+  const loading = useSelector((state: RootState) => state.login.loading);
+  const error = useSelector((state: RootState) => state.login.error);
+
+  useEffect(() => {}, [error]);
+
   /**
-   * Function to handle user login.
-   */
-  const handleLogin = () => {
-    try {
-      props.navigation.navigate('Tab');
-    } catch (err) {
-      Sentry.captureException(err);
+   * This function calls the onsubmit event. It triggers validation and sends data to the API
+  */
+  const renderButton = () => {
+    if (loading) {
+      return (
+        <Spinner
+          color="#016aec"
+          size="large"
+        />
+      );
+    } else {
+      return (
+        <Button onPress={handleLogin}>Sign in</Button>
+      );
     }
   };
 
-  const { container, viewStyle, displayImg, loginText, forgotPassText, orText, socialIconContainer, signupText, signupTextSpan } = styles;
+  /**
+   * Function to handle user login.
+   */
+  const handleLogin = async () => {
+    dispatch(loginLoading(true));
+    try {
+      if (!password && !email) {
+        dispatch(loginFailure('Please enter email and password'));
+        return;
+      }
+      const userData = {
+        username: email,
+        password,
+      };
+
+      const responseData = await dispatch(loginUser(userData));
+
+      if (loginUser.fulfilled.match(responseData)) {
+        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&');
+        props.navigation.navigate('Tab');
+      }
+    } catch (err) {
+      dispatch(loginFailure(err));
+      Sentry.captureException(err);
+    } finally {
+      dispatch(loginLoading(false));
+    }
+  };
+
+  const { container, viewStyle, displayImg, loginText, forgotPassText, orText, socialIconContainer, signupText, signupTextSpan, errorText } = styles;
 
   return (
     <SafeAreaView style={container}>
@@ -45,18 +98,26 @@ const Login = (props: any):JSX.Element => {
       <View style={viewStyle}>
         <Text style={loginText}>Login</Text>
 
+        {error && <Text style={errorText}>{error}</Text>}
+
         <Input
           startIconName="at-line"
           placeholder="Email ID"
+          onChangeText={text => {
+            setEmail(text);
+          }}
         />
         <Input
           startIconName="lock-line"
           placeholder="Password"
+          onChangeText={text => {
+            setPassword(text);
+          }}
         >
           <Text style={forgotPassText}>Forgot Password?</Text>
         </Input>
 
-        <Button onPress={handleLogin}>Sign in</Button>
+        {renderButton()}
 
         <Text style={orText}>Or, login with...</Text>
 
@@ -94,7 +155,7 @@ const styles = StyleSheet.create({
     color: '#172B4E',
     fontSize: hp(5.0),
     fontWeight: '700',
-    marginBottom: Platform.OS === 'ios' ? 45 : 30,
+    marginBottom: Platform.OS === 'ios' ? 40 : 27,
   },
   forgotPassText: {
     fontSize: hp(1.8),
@@ -121,6 +182,12 @@ const styles = StyleSheet.create({
   },
   signupTextSpan: {
     color: '#016aec',
+  },
+  errorText: {
+    textAlign:
+    'center',
+    color: '#FF276A',
+    marginBottom: Platform.OS === 'ios' ? 20 : 5,
   },
 });
 
