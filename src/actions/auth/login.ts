@@ -24,10 +24,12 @@ export const loginUser = createAsyncThunk(
 
       const data = response.data;
 
-      const jsonValue = JSON.stringify(data);
-      await AsyncStorage.setItem('profile', jsonValue);
-
       await AsyncStorage.setItem('token', data.token);
+      const profile = await AsyncStorage.getItem('profile');
+      if (!profile) {
+        const jsonValue = JSON.stringify(data);
+        await AsyncStorage.setItem('profile', jsonValue);
+      }
 
       return data;
     } catch (err: any) {

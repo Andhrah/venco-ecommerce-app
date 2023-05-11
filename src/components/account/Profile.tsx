@@ -5,15 +5,14 @@ import Icon from 'react-native-remix-icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 
-import { useAppDispatch } from '../../store/hooks';
-import { getProfile } from '../../actions/account/getProfile';
-import { updateProfile } from '../../actions/account/updateProfile';
+// import { useAppDispatch } from '../../store/hooks';
+// import { getProfile } from '../../actions/account/getProfile';
 import { LoginState } from '../../reducers/auth/login';
 import { RootState } from '../../store';
 import { Spinner } from '../shared';
 
 
-const Profile = ():JSX.Element => {
+const Profile = (props: any):JSX.Element => {
 
   const [localProfile, setLocalProfile] = useState({
     firstName: '',
@@ -26,12 +25,9 @@ const Profile = ():JSX.Element => {
   const [lastname, setLastname] = useState(profile.lastName);
   const [mail, setMail] = useState(profile.email);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const profileLoading = useSelector((state: RootState) => state.profile.loading);
-  const profileError = useSelector((state: RootState) => state.profile.error);
+  // const profileError = useSelector((state: RootState) => state.profile.error);
 
   // get profile info from backend server
   useEffect(() => {
@@ -39,8 +35,8 @@ const Profile = ():JSX.Element => {
   },);
 
   useEffect(() => {
-    // getProfileLocally();
-    getProfileFromReduxState();
+    getProfileLocally();
+    // getProfileFromReduxState();
   },);
 
   /**
@@ -51,12 +47,17 @@ const Profile = ():JSX.Element => {
     if (profileInfo) {
       const data = JSON.parse(profileInfo);
       setLocalProfile(data);
+      const { firstName, lastName, email } = localProfile;
+      setFirstname(firstName);
+      setLastname(lastName);
+      setMail(email);
     }
   };
 
   /**
    * Function for geting login user data from redux store
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getProfileFromReduxState = () => {
     const { firstName, lastName, email} = profile.data;
     setFirstname(firstName);
@@ -64,9 +65,15 @@ const Profile = ():JSX.Element => {
     setMail(email);
   };
 
-  const handleSaveProfile = () => {
-    const updatedProfile = { name, email };
-    dispatch(updateProfile(updatedProfile));
+  /**
+   * Function for logs login user out
+   */
+  const handleLogOut = async () => {
+    const token = await AsyncStorage.getItem('token');
+    if (token) {
+      await AsyncStorage.removeItem('token');
+    }
+    props.navigation.push('AppFirstLaunch');
   };
 
   const { container, editIcon, viewStyle, displayImgContainer, nameText, profileContainer, iconContainer, contactText, infoText, infoContainer, displayImg, logoutContainer, logoutText } = styles;
@@ -87,7 +94,7 @@ const Profile = ():JSX.Element => {
       ) : (
         <ScrollView>
           <View>
-            <TouchableOpacity style={editIcon}>
+            <TouchableOpacity onPress={() => props.navigation.navigate('EditProfile')} style={editIcon}>
               <Icon name="edit-fill" color="#016aec" size={30} />
             </TouchableOpacity>
 
@@ -152,7 +159,7 @@ const Profile = ():JSX.Element => {
 
             <View style={[iconContainer, infoContainer, logoutContainer]}>
               <Icon name="logout-box-line" color="#FF3F53" size={23} />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleLogOut}>
                 <Text style={[contactText, logoutText]}>Log out</Text>
               </TouchableOpacity>
             </View>
