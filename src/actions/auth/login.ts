@@ -24,6 +24,9 @@ export const loginUser = createAsyncThunk(
 
       const data = response.data;
 
+      const jsonValue = JSON.stringify(data);
+      await AsyncStorage.setItem('profile', jsonValue);
+
       await AsyncStorage.setItem('token', data.token);
 
       return data;
