@@ -4,6 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Icon from 'react-native-remix-icon';
 
 import { Button } from './Button';
+import truncateStr from '../../utils/truncateStr';
 
 /**
  * CardProps - Props for the Card component.
@@ -17,6 +18,7 @@ type CardProps = {
   imgSrc: ImageProps['source'];
   title?: string
   price?: string
+  description?: string
 }
 
 /**
@@ -27,7 +29,7 @@ type CardProps = {
  *
  * @returns {JSX.Element} Card component.
  */
-const Card = ({imgSrc, title, price}:CardProps): JSX.Element => {
+const Card = ({imgSrc, title, price, description}:CardProps): JSX.Element => {
   const { container, iconStyle, img, textStyle, btn, btnText, priceText } = styles;
 
   return (
@@ -38,7 +40,7 @@ const Card = ({imgSrc, title, price}:CardProps): JSX.Element => {
      <Image source={imgSrc} style={img} />
       <Text style={textStyle}>{title}</Text>
       <Text style={[textStyle, priceText]}>₦{price}</Text>
-      <Text style={textStyle}>Blue sneaker</Text>
+      <Text style={textStyle}>{truncateStr(description!)}...</Text>
 
       <View>
         <Button
@@ -65,6 +67,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginBottom: 20,
     paddingHorizontal: 10,
+    marginRight: 15,
   },
   iconStyle: {
     alignSelf: 'flex-end',
