@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Platform } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-remix-icon';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import Login from '../components/auth/Login';
@@ -13,6 +13,7 @@ import Profile from '../components/account/Profile';
 import Favourites from '../components/products/Favourites';
 import Cart from '../components/products/Cart';
 import Products from '../components/products/Products';
+import EditProfile from '../components/account/EditProfile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,6 +27,26 @@ type TabIconProps = {
   size: number;
   route: any;
 }
+
+const AppFirstLaunch = (props: any) => {
+
+  useEffect(() => {
+    isLoggedIn();
+  });
+  const isLoggedIn = async() => {
+
+    const userToken = await AsyncStorage.getItem('token');
+
+    if (userToken) {
+      props.navigation.navigate('Tab');
+    } else {
+      props.navigation.navigate('Login');
+    }
+  };
+  return (
+    <></>
+  );
+};
 
 /**
  * Component for rendering the tab screens.
@@ -82,10 +103,11 @@ const App = (): JSX.Element => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-        }}
-      >
+        }}>
+        <Stack.Screen name="AppFirstLaunch" component={AppFirstLaunch} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Tab" component={TabScreens} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

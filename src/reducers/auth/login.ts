@@ -4,7 +4,7 @@ import { loginUser } from '../../actions/auth/login';
 /**
  * Represents the state of the login feature.
  */
-type LoginState = {
+export type LoginState = {
   loading: boolean;
   data: null | any;
   error: null | any;
