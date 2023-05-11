@@ -3,12 +3,12 @@ import { SafeAreaView, StatusBar, View, Text, Image, StyleSheet, Platform, Touch
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import * as Sentry from '@sentry/react-native';
 import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { loginLoading, loginFailure } from '../../reducers/auth/login';
 import { loginUser } from '../../actions/auth/login';
 import { RootState } from '../../store';
 import { useAppDispatch } from '../../store/hooks';
-
 
 import { Button, IconButton, Input, Spinner } from '../shared';
 
@@ -69,7 +69,9 @@ const Login = (props: any):JSX.Element => {
       const responseData = await dispatch(loginUser(userData));
 
       if (loginUser.fulfilled.match(responseData)) {
-        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&');
+        const jsonValue = JSON.stringify(responseData.payload);
+        await AsyncStorage.setItem('profile', jsonValue);
+
         props.navigation.navigate('Tab');
       }
     } catch (err) {
@@ -105,13 +107,16 @@ const Login = (props: any):JSX.Element => {
           placeholder="Email ID"
           onChangeText={text => {
             setEmail(text);
+            dispatch(loginFailure(null));
           }}
         />
         <Input
           startIconName="lock-line"
           placeholder="Password"
+          secureTextEntry={true}
           onChangeText={text => {
             setPassword(text);
+            dispatch(loginFailure(null));
           }}
         >
           <Text style={forgotPassText}>Forgot Password?</Text>
