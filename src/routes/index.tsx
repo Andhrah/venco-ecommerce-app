@@ -10,7 +10,7 @@ import { heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import Login from '../components/auth/Login';
 import Profile from '../components/account/Profile';
-import Favourites from '../components/account/Favourites';
+import Favourites from '../components/products/Favourites';
 import Cart from '../components/products/Cart';
 import Products from '../components/products/Products';
 
@@ -51,7 +51,7 @@ const TabScreens = ():JSX.Element => {
   };
 
   return (
-    <Tab.Navigator
+    <Tab.Navigator initialRouteName="Profile"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => renderTabBarIcon({ focused, color, size, route }),
         tabBarActiveTintColor: '#016aec',
