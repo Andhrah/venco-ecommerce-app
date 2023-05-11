@@ -2,8 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import request from '../../utils/request';
 
-interface ProfileData {
-  name: string;
+export type ProfileData = {
+  firstName: string;
+  lastName: string;
   email: string;
 }
 
