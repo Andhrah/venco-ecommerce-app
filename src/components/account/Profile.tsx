@@ -3,25 +3,70 @@ import { SafeAreaView, StatusBar, View, Text, StyleSheet, Platform, TouchableOpa
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-remix-icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
+
+import { useAppDispatch } from '../../store/hooks';
+import { getProfile } from '../../actions/account/getProfile';
+import { updateProfile } from '../../actions/account/updateProfile';
+import { LoginState } from '../../reducers/auth/login';
+import { RootState } from '../../store';
+import { Spinner } from '../shared';
+
 
 const Profile = ():JSX.Element => {
 
-  const [profile, setProfile] = useState({
+  const [localProfile, setLocalProfile] = useState({
     firstName: '',
     lastName: '',
     email: '',
   });
+  const profile: LoginState = useSelector((state: RootState) => state.login);
+
+  const [firstname, setFirstname] = useState(profile.firstName);
+  const [lastname, setLastname] = useState(profile.lastName);
+  const [mail, setMail] = useState(profile.email);
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const dispatch = useAppDispatch();
+  const profileLoading = useSelector((state: RootState) => state.profile.loading);
+  const profileError = useSelector((state: RootState) => state.profile.error);
+
+  // get profile info from backend server
+  useEffect(() => {
+    // dispatch(getProfile());
+  },);
 
   useEffect(() => {
-    getProfile();
-  }, [profile]);
+    // getProfileLocally();
+    getProfileFromReduxState();
+  },);
 
-  const getProfile = async () => {
+  /**
+   * Function for geting login user data from local storage
+   */
+  const getProfileLocally = async () => {
     const profileInfo = await AsyncStorage.getItem('profile');
     if (profileInfo) {
       const data = JSON.parse(profileInfo);
-      setProfile(data);
+      setLocalProfile(data);
     }
+  };
+
+  /**
+   * Function for geting login user data from redux store
+   */
+  const getProfileFromReduxState = () => {
+    const { firstName, lastName, email} = profile.data;
+    setFirstname(firstName);
+    setLastname(lastName);
+    setMail(email);
+  };
+
+  const handleSaveProfile = () => {
+    const updatedProfile = { name, email };
+    dispatch(updateProfile(updatedProfile));
   };
 
   const { container, editIcon, viewStyle, displayImgContainer, nameText, profileContainer, iconContainer, contactText, infoText, infoContainer, displayImg, logoutContainer, logoutText } = styles;
@@ -33,79 +78,87 @@ const Profile = ():JSX.Element => {
         hidden={false} translucent={false}
         barStyle="light-content"
       />
-      <ScrollView>
-        <View>
-          <TouchableOpacity style={editIcon}>
-            <Icon name="edit-fill" color="#016aec" size={30} />
-          </TouchableOpacity>
 
-          <View style={viewStyle}>
-            <View style={displayImgContainer}>
-              <Text style={displayImg}>👩🏽‍🦱</Text>
-            </View>
-            <Text style={nameText}>{profile.firstName} {profile.lastName}</Text>
-          </View>
-
-          <View style={profileContainer}>
-            <View style={iconContainer}>
-              <Icon name="phone-line" color="#016aec" size={20} />
-              <Text style={contactText}>+2348130003935</Text>
-            </View>
-            <View style={iconContainer}>
-              <Icon name="mail-line" color="#016aec" size={20} />
-              <Text style={contactText}>{profile.email}</Text>
-            </View>
-          </View>
-
-          {/* Profile Info */}
-
-          <View style={profileContainer}>
-            <View style={[iconContainer, infoContainer]}>
-              <Icon name="heart-fill" color="#016aec" size={20} />
-              <TouchableOpacity>
-                <Text style={[contactText, infoText]}>Your Favourite</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[iconContainer, infoContainer]}>
-              <Icon name="wallet-3-fill" color="#016aec" size={20} />
-              <TouchableOpacity>
-                <Text style={[contactText, infoText]}>Payment</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[iconContainer, infoContainer]}>
-              <Icon name="shopping-cart-fill" color="#016aec" size={20} />
-              <TouchableOpacity>
-                <Text style={[contactText, infoText]}>Orders</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[iconContainer, infoContainer]}>
-              <Icon name="group-fill" color="#016aec" size={20} />
-              <TouchableOpacity>
-                <Text style={[contactText, infoText]}>Tell Your Friend</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[iconContainer, infoContainer]}>
-              <Icon name="settings-2-fill" color="#016aec" size={20} />
-              <TouchableOpacity>
-                <Text style={[contactText, infoText]}>Settings</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Logout */}
-
-          <View style={[iconContainer, infoContainer, logoutContainer]}>
-            <Icon name="logout-box-line" color="#FF3F53" size={23} />
-            <TouchableOpacity>
-              <Text style={[contactText, logoutText]}>Log out</Text>
+      {profileLoading ? (
+        <Spinner
+          color="#016aec"
+          size="large"
+        />
+      ) : (
+        <ScrollView>
+          <View>
+            <TouchableOpacity style={editIcon}>
+              <Icon name="edit-fill" color="#016aec" size={30} />
             </TouchableOpacity>
+
+            <View style={viewStyle}>
+              <View style={displayImgContainer}>
+                <Text style={displayImg}>👩🏽‍🦱</Text>
+              </View>
+              <Text style={nameText}>{firstname} {lastname}</Text>
+            </View>
+
+            <View style={profileContainer}>
+              <View style={iconContainer}>
+                <Icon name="phone-line" color="#016aec" size={20} />
+                <Text style={contactText}>+2348130003935</Text>
+              </View>
+              <View style={iconContainer}>
+                <Icon name="mail-line" color="#016aec" size={20} />
+                <Text style={contactText}>{mail}</Text>
+              </View>
+            </View>
+
+            {/* Profile Info */}
+
+            <View style={profileContainer}>
+              <View style={[iconContainer, infoContainer]}>
+                <Icon name="heart-fill" color="#016aec" size={20} />
+                <TouchableOpacity>
+                  <Text style={[contactText, infoText]}>Your Favourite</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={[iconContainer, infoContainer]}>
+                <Icon name="wallet-3-fill" color="#016aec" size={20} />
+                <TouchableOpacity>
+                  <Text style={[contactText, infoText]}>Payment</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={[iconContainer, infoContainer]}>
+                <Icon name="shopping-cart-fill" color="#016aec" size={20} />
+                <TouchableOpacity>
+                  <Text style={[contactText, infoText]}>Orders</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={[iconContainer, infoContainer]}>
+                <Icon name="group-fill" color="#016aec" size={20} />
+                <TouchableOpacity>
+                  <Text style={[contactText, infoText]}>Tell Your Friend</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={[iconContainer, infoContainer]}>
+                <Icon name="settings-2-fill" color="#016aec" size={20} />
+                <TouchableOpacity>
+                  <Text style={[contactText, infoText]}>Settings</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Logout */}
+
+            <View style={[iconContainer, infoContainer, logoutContainer]}>
+              <Icon name="logout-box-line" color="#FF3F53" size={23} />
+              <TouchableOpacity>
+                <Text style={[contactText, logoutText]}>Log out</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

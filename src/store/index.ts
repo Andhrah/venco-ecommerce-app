@@ -1,12 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { loginReducer } from '../reducers/auth/login';
+import { profileReducer } from '../reducers/account/profile';
+
 
 /**
  * The Redux store configuration.
  */
 const store = configureStore({
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: false,
+  }),
+
   reducer: {
     login: loginReducer,
+    profile: profileReducer,
   },
 });
 

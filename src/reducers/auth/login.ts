@@ -4,10 +4,15 @@ import { loginUser } from '../../actions/auth/login';
 /**
  * Represents the state of the login feature.
  */
-interface LoginState {
+type LoginState = {
   loading: boolean;
   data: null | any;
   error: null | any;
+
+  // data to persist using redux
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 /**
@@ -17,6 +22,9 @@ const initialState: LoginState = {
   loading: false,
   data: null,
   error: null,
+  firstName: '',
+  lastName: '',
+  email: '',
 };
 
 /**
@@ -53,6 +61,12 @@ const loginSlice = createSlice({
      */
     loginFailure: (state, action: PayloadAction<any>) => {
       state.error = action.payload;
+    },
+    // user login data to persist in redux state
+    setProfile: (state, action: PayloadAction<LoginState>) => {
+      state.firstName = action.payload.firstName;
+      state.lastName = action.payload.lastName;
+      state.email = action.payload.email;
     },
   },
   extraReducers: (builder) => {

@@ -1,9 +1,8 @@
 import axios from 'axios';
 import Config from 'react-native-config';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const url = Config.BASE_URL;
-
 
 type RequestProps = {
   route?: string;
@@ -11,7 +10,6 @@ type RequestProps = {
   payload?: any;
   params?: object;
 }
-
 
 /**
  * Helper function that configures axios requests
@@ -30,11 +28,17 @@ const request = async (
     params,
   }: RequestProps
 ) => {
+  const token = await AsyncStorage.getItem('token');
   method = method || 'get';
   const headers = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    Authorization: token ? `Bearer ${token}` : undefined,
   };
+
+  if (!token) {
+    delete headers.Authorization;
+  }
 
   return axios({
     data: payload,
