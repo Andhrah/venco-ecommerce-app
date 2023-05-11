@@ -11,6 +11,9 @@ import { LoginState } from '../../reducers/auth/login';
 import { RootState } from '../../store';
 import { Spinner } from '../shared';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { syncProfileData } from '../../utils/syncData';
+
 
 const Profile = (props: any):JSX.Element => {
 
@@ -32,6 +35,7 @@ const Profile = (props: any):JSX.Element => {
   // get profile info from backend server
   useEffect(() => {
     // dispatch(getProfile());
+    //  syncProfileData(); // Sync profile data when component mounts
   },);
 
   useEffect(() => {
