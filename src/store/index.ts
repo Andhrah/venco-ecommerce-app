@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { loginReducer } from '../reducers/auth/login';
 import { profileReducer } from '../reducers/account/profile';
+import { productseReducer } from '../reducers/products/products';
 
 
 /**
@@ -14,6 +15,7 @@ const store = configureStore({
   reducer: {
     login: loginReducer,
     profile: profileReducer,
+    products: productseReducer,
   },
 });
 
