@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { loginReducer } from '../reducers/auth/login';
 import { profileReducer } from '../reducers/account/profile';
 import { productsReducer } from '../reducers/products/products';
+import { cartReducer } from '../reducers/products/Cart';
 
 
 /**
@@ -16,6 +17,7 @@ const store = configureStore({
     login: loginReducer,
     profile: profileReducer,
     products: productsReducer,
+    cart: cartReducer,
   },
 });
 

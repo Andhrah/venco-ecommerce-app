@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, GestureResponderEvent, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 /**
@@ -15,7 +15,7 @@ type CategoryBtnProps = {
   onPress?: (event: GestureResponderEvent) => void;
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  textStyle?: object;
+  btnTextStyle?: StyleProp<TextStyle>;
 };
 
 /**
@@ -24,7 +24,7 @@ type CategoryBtnProps = {
  * @param {CategoryBtnProps} props - The properties for the component.
  * @returns {JSX.Element} The rendered component.
  */
-const CategoryBtn = ({ children, onPress, style}: CategoryBtnProps): JSX.Element => {
+const CategoryBtn = ({ children, onPress, style, btnTextStyle}: CategoryBtnProps): JSX.Element => {
   const { buttonStyle, textstyle } = styles;
   return (
     <View>
@@ -32,7 +32,7 @@ const CategoryBtn = ({ children, onPress, style}: CategoryBtnProps): JSX.Element
         onPress={onPress}
         style={[buttonStyle, style]}
         >
-        <Text style={[textstyle, style]}>{children}</Text>
+        <Text style={[textstyle, btnTextStyle]}>{children}</Text>
       </TouchableOpacity>
     </View>
   );

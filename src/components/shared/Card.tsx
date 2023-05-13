@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageProps } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageProps, GestureResponderEvent } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-remix-icon';
 
@@ -13,12 +13,16 @@ import truncateStr from '../../utils/truncateStr';
  * @property {ImageProps['source']} imgSrc - The image source for the card.
  * @property {string} [title] - The title of the card.
  * @property {string} [price] - The price of the card.
+ * @property {() => void} [onPress] - The function that will be called when the button is pressed.
+
  */
 type CardProps = {
   imgSrc: ImageProps['source'];
   title?: string
   price?: string
   description?: string
+  onPress?: (event: GestureResponderEvent) => void;
+  onPressAddToCart?: (event: GestureResponderEvent) => void;
 }
 
 /**
@@ -29,11 +33,11 @@ type CardProps = {
  *
  * @returns {JSX.Element} Card component.
  */
-const Card = ({imgSrc, title, price, description}:CardProps): JSX.Element => {
+const Card = ({imgSrc, title, price, description, onPress, onPressAddToCart}:CardProps): JSX.Element => {
   const { container, iconStyle, img, textStyle, btn, btnText, priceText } = styles;
 
   return (
-    <View style={container}>
+    <TouchableOpacity onPress={onPress} style={container}>
       <TouchableOpacity>
         <Icon name="heart-3-line" color="#A3ADBA" style={iconStyle} />
       </TouchableOpacity>
@@ -48,13 +52,13 @@ const Card = ({imgSrc, title, price, description}:CardProps): JSX.Element => {
           color="#FFFFFF"
           endIconName="shopping-cart-fill"
           btnTextStyle={btnText}
-          onPress={() => console.log('Add to cart')}
+          onPress={onPressAddToCart}
           iconSize={16}
         >
           Add
         </Button>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
