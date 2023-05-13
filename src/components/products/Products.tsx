@@ -24,33 +24,18 @@ const Products = (): JSX.Element => {
   const [searchQuery, setProductSearchQuery] = useState('');
 
   useEffect(() => {
-    handleGetProducts();
-    if (searchQuery) {
-      handleSearch(searchQuery);
-    }
+    handleGetProducts(searchQuery);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
-  const handleGetProducts = async () => {
+  const handleGetProducts = async (query: string) => {
     dispatch(productsLoading(true));
     try {
-      const responseData = await dispatch(getProducts());
-
-      if (getProducts.fulfilled.match(responseData)) {
-        setProductList(responseData.payload.products);
+      let responseData: any;
+      if (!searchQuery) {
+        responseData = await dispatch(getProducts());
       }
-    } catch (err) {
-      dispatch(productsFailure(err));
-      Sentry.captureException(err);
-    } finally {
-      dispatch(productsLoading(false));
-    }
-  };
-
-  const handleSearch = async (query: string) => {
-    dispatch(productsLoading(true));
-    try {
-      const responseData = await dispatch(getProducts(`search?q=${query}`));
+      responseData = await dispatch(getProducts(`search?q=${query}`));
 
       if (getProducts.fulfilled.match(responseData)) {
         setProductList(responseData.payload.products);
@@ -108,7 +93,7 @@ const Products = (): JSX.Element => {
             setProductSearchQuery(text);
           }}
         >
-          <TouchableOpacity style={filterContainer} onPress={() => handleSearch(searchQuery)}>
+          <TouchableOpacity style={filterContainer} onPress={() => handleGetProducts(searchQuery)}>
             <Icon name="equalizer-line" />
           </TouchableOpacity>
         </Input>
