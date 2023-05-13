@@ -13,6 +13,7 @@ import { Card, Input, Spinner } from '../shared';
 import { productsFailure, productsLoading } from '../../reducers/products/products';
 
 import Categories from './Category';
+import { addToCart } from '../../reducers/products/Cart';
 
 
 const Products = (props: any): JSX.Element => {
@@ -48,6 +49,12 @@ const Products = (props: any): JSX.Element => {
     }
   };
 
+  const handleAddToCart = (item: any) => {
+    // Dispatch an action to add the item to the cart
+    dispatch(addToCart(item));
+  };
+
+
   const renderItem = ({ item }: { item: any }) => (
     <Card
       key={item.id}
@@ -62,6 +69,7 @@ const Products = (props: any): JSX.Element => {
         productDescription: item.description,
         productImage: item.thumbnail,
       })}
+      onPressAddToCart={() => handleAddToCart(item)}
     />
   );
 
