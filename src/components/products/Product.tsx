@@ -2,8 +2,11 @@ import React from 'react';
 import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-remix-icon';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import { Button } from '../shared';
 
+import { useAppDispatch } from '../../store/hooks';
+
+import { Button } from '../shared';
+import { addToCart } from '../../reducers/products/Cart';
 
 type ProductProps = {
   route: any;
@@ -12,9 +15,24 @@ type ProductProps = {
 
 const Product = ({ route, navigation }:ProductProps): JSX.Element => {
 
-  const { productName, productPrice, productDescription, productImage } = route.params;
+  const dispatch = useAppDispatch();
+  const { productId, productName, productPrice, productDescription, productImage } = route.params;
+
+  const productItem = {
+    id: productId,
+    title: productName,
+    price: productPrice,
+    thumbnail: productImage,
+  };
+
+  const handleAddToCart = (item: any) => {
+    // Dispatch an action to add the item to the cart
+    dispatch(addToCart(item));
+    navigation.navigate('Cart');
+  };
 
   const { container, viewContainer, headerContainer, headerText, displayImg, rowContainer, title, categoryText, starContainer, priceText, descriptionText, quantityContainer, quantityIconView } = styles;
+
   return (
     <SafeAreaView style={container}>
       <StatusBar
@@ -82,7 +100,7 @@ const Product = ({ route, navigation }:ProductProps): JSX.Element => {
             </TouchableOpacity>
           </View>
 
-          <Button>Add to cart</Button>
+          <Button onPress={() => handleAddToCart(productItem)}>Add to cart</Button>
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -128,6 +146,7 @@ const styles = StyleSheet.create({
     fontSize: hp(3.3),
     color: '#172B4E',
     fontWeight: '600',
+    width: wp('70%'),
   },
   categoryText: {
     fontSize: hp(1.7),
