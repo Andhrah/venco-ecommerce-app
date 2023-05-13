@@ -14,6 +14,7 @@ import Favourites from '../components/products/Favourites';
 import Cart from '../components/products/Cart';
 import Products from '../components/products/Products';
 import EditProfile from '../components/account/EditProfile';
+import Product from '../components/products/Product';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -104,10 +105,13 @@ const App = (): JSX.Element => {
         screenOptions={{
           headerShown: false,
         }}>
+        {/* <Stack.Screen name="Product" component={Product} /> */}
         <Stack.Screen name="AppFirstLaunch" component={AppFirstLaunch} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Tab" component={TabScreens} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
+
+        <Stack.Screen name="Product" component={Product} />
       </Stack.Navigator>
     </NavigationContainer>
   );
