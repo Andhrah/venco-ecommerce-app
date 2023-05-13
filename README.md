@@ -46,7 +46,15 @@ npm install
 npx react-native run-ios or npx react-native run-android
 ```
 
+- Login info
+
+```
+email:- kminchelle
+password:- 0lelplR
+```
+
 - To run test, run
+
 
 ```
 npm test
