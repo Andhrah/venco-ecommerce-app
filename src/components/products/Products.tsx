@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, StatusBar, SafeAreaView, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-remix-icon';
 import { useSelector } from 'react-redux';
@@ -9,32 +9,42 @@ import { getProducts } from '../../actions/products/products';
 import { RootState } from '../../store';
 import { useAppDispatch } from '../../store/hooks';
 
-import { Card, CategoryBtn, Input } from '../shared';
+import { Card, Input, Spinner } from '../shared';
 import { productsFailure, productsLoading } from '../../reducers/products/products';
+
+import Categories from './Category';
+
 
 const Products = (): JSX.Element => {
 
   const dispatch = useAppDispatch();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const loading = useSelector((state: RootState) => state.products.loading);
+
   const [productList, setProductList] = useState([]);
+  const [searchQuery, setProductSearchQuery] = useState('');
 
   useEffect(() => {
-    handleGetProducts('phone');
-  },);
+    handleGetProducts(searchQuery);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleGetProducts = async (query: string) => {
     dispatch(productsLoading(true));
     try {
-      const responseData = await dispatch(getProducts('laptop' || query));
+      let responseData: any;
+      if (!searchQuery) {
+        responseData = await dispatch(getProducts());
+      }
+      responseData = await dispatch(getProducts(`search?q=${query}`));
 
       if (getProducts.fulfilled.match(responseData)) {
         setProductList(responseData.payload.products);
-        console.log(productList);
       }
     } catch (err) {
       dispatch(productsFailure(err));
       Sentry.captureException(err);
+    } finally {
+      dispatch(productsLoading(false));
     }
   };
 
@@ -48,7 +58,7 @@ const Products = (): JSX.Element => {
     />
   );
 
-  const { container, profileStyle, generalTextStyle, searchView, scrollViewStyle, cardContainer, focusedBtn, avatarContainer, avatarText, viewContainer, mapContainer, filterContainer, searchInput } = styles;
+  const { container, profileStyle, generalTextStyle, searchView, cardContainer, avatarContainer, avatarText, viewContainer, mapContainer, filterContainer, searchInput, notFoundText, notFoundContainer } = styles;
 
   return (
     <SafeAreaView style={container}>
@@ -75,52 +85,48 @@ const Products = (): JSX.Element => {
         </View>
 
         <Input
-          placeholder="Search for food"
+          placeholder="Search products"
           startIconName="search-line"
           viewStyle={searchView}
           style={searchInput}
+          onChangeText={text => {
+            setProductSearchQuery(text);
+          }}
         >
-          <TouchableOpacity style={filterContainer}>
+          <TouchableOpacity style={filterContainer} onPress={() => handleGetProducts(searchQuery)}>
             <Icon name="equalizer-line" />
           </TouchableOpacity>
         </Input>
 
         <Text style={generalTextStyle}>Categories</Text>
 
-        <View style={scrollViewStyle}>
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          >
-            <CategoryBtn style={focusedBtn}>
-              💻 Electronics
-            </CategoryBtn>
-            <CategoryBtn>
-            🥦 Grocery
-            </CategoryBtn>
-            <CategoryBtn>
-              🎮 Gaming
-            </CategoryBtn>
-            <CategoryBtn>
-              👗👔 Fashion
-            </CategoryBtn>
-            <CategoryBtn>
-              🚘 Automobile
-            </CategoryBtn>
-          </ScrollView>
-        </View>
+        <Categories />
 
         <View>
 
-          <FlatList
-            data={productList}
-            renderItem={renderItem}
-            keyExtractor={(item: any) => item.id.toString()}
-            contentContainerStyle={cardContainer}
-            showsVerticalScrollIndicator={false}
-            numColumns={2}
-            windowSize={3} // Set the windowSize to retain 3 offscreen items
-          />
+          {loading ? (
+            <Spinner
+              color="#016aec"
+              size="large"
+            />
+          ) : (
+            <FlatList
+              data={productList}
+              renderItem={renderItem}
+              keyExtractor={(item: any) => item.id.toString()}
+              contentContainerStyle={cardContainer}
+              showsVerticalScrollIndicator={false}
+              numColumns={2}
+              windowSize={3} // Set the windowSize to retain 3 offscreen items
+            />
+          )}
+
+          {!loading && productList.length === 0 ? (
+            <View style={notFoundContainer}>
+              <Text style={notFoundText}>No products found</Text>
+            </View>
+          ) : <></>}
+
         </View>
       </View>
     </SafeAreaView>
@@ -157,18 +163,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingBottom: 0,
   },
-  scrollViewStyle: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
   cardContainer: {
     marginTop: 20,
     paddingBottom: hp('20%'),
     // height: '100%',
-  },
-  focusedBtn: {
-    backgroundColor: '#016aec',
-    color: '#FEF0DC',
   },
   avatarContainer: {
     alignItems: 'center',
@@ -186,11 +184,19 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     backgroundColor: '#E5ECF3',
-    padding: 10,
+    padding: 8,
     borderRadius: 50,
   },
   searchInput: {
     width: '84%',
+  },
+  notFoundContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '10%',
+  },
+  notFoundText: {
+    fontSize: hp(2.4),
   },
 });
 

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import Config from 'react-native-config';
+// import Config from 'react-native-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const url = Config.BASE_URL;
+// const url = Config.BASE_URL;
 
 type RequestProps = {
   route?: string;
@@ -42,7 +42,7 @@ const request = async (
 
   return axios({
     data: payload,
-    url: `${url}/${route}`,
+    url: `https://dummyjson.com/${route}`,
     method,
     headers,
     params,
