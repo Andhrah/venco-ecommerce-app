@@ -185,8 +185,7 @@ const styles = StyleSheet.create({
     color: '#016aec',
   },
   errorText: {
-    textAlign:
-    'center',
+    textAlign: 'center',
     color: '#FF276A',
     marginBottom: Platform.OS === 'ios' ? 20 : 5,
   },

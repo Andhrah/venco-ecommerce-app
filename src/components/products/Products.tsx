@@ -15,7 +15,7 @@ import { productsFailure, productsLoading } from '../../reducers/products/produc
 import Categories from './Category';
 
 
-const Products = (): JSX.Element => {
+const Products = (props: any): JSX.Element => {
 
   const dispatch = useAppDispatch();
   const loading = useSelector((state: RootState) => state.products.loading);
@@ -55,6 +55,13 @@ const Products = (): JSX.Element => {
       price={item.price}
       imgSrc={{uri: item.thumbnail}}
       description={item.description}
+      onPress={() => props.navigation.navigate('Product', {
+        productId: item.id,
+        productName: item.title,
+        productPrice: item.price,
+        productDescription: item.description,
+        productImage: item.thumbnail,
+      })}
     />
   );
 
