@@ -7,7 +7,7 @@ import request from '../../utils/request';
  * @returns {Promise<Product[]>} A promise that resolves to an array of products.
  * @throws {Error} If the user is unauthorized or if there is an error in the API response.
  */
-export const getProducts = createAsyncThunk('products/getProducts', async (searchParams: string) => {
+export const getProducts = createAsyncThunk('products/getProducts', async (url?: string) => {
   try {
     const token = await AsyncStorage.getItem('token');
     if (!token) {
@@ -15,9 +15,8 @@ export const getProducts = createAsyncThunk('products/getProducts', async (searc
     }
 
     const response = await request({
-      route: 'products',
+      route: url ? `products/${url}` : 'products',
       method: 'get',
-      params: { search: searchParams }, // Example search params, replace with your desired search params
     });
 
     const data = response.data;

@@ -4,7 +4,7 @@ import { getProducts } from '../../actions/products/products';
 /**
  * Represents the state of the products feature.
  */
-type ProductsState = {
+export type ProductsState = {
   loading: boolean;
   data: null | any;
   error: null | any;
@@ -13,23 +13,23 @@ type ProductsState = {
 /**
  * The initial state of the profile feature.
  */
-const initialState: ProductsState = {
+export const initialState: ProductsState = {
   loading: false,
   data: null,
   error: null,
 };
 
 /**
- * The profile slice of the Redux store.
+ * The products slice of the Redux store.
  */
 const productsSlice = createSlice({
-  name: 'profile',
+  name: 'products',
   initialState,
   reducers: {
     /**
-     * Sets the loading state of the profile data request.
+     * Sets the loading state of the products data request.
      *
-     * @param {ProfileState} state - The current state.
+     * @param {ProductsState} state - The current state.
      * @param {PayloadAction<boolean>} action - The action object containing the loading state.
      */
     productsLoading: (state, action: PayloadAction<boolean>) => {
@@ -37,10 +37,10 @@ const productsSlice = createSlice({
     },
 
     /**
-     * Updates the state with the fetched profile data.
+     * Updates the state with the fetched products data.
      *
-     * @param {ProfileState} state - The current state.
-     * @param {PayloadAction<any>} action - The action object containing the profile data.
+     * @param {ProductsState} state - The current state.
+     * @param {PayloadAction<any>} action - The action object containing the products data.
      */
     productsSuccess: (state, action: PayloadAction<any>) => {
       state.data = action.payload;
@@ -48,13 +48,16 @@ const productsSlice = createSlice({
     },
 
     /**
-     * Updates the state with the profile data request failure error.
+     * Updates the state with the products data request failure error.
      *
-     * @param {ProfileState} state - The current state.
+     * @param {ProductsState} state - The current state.
      * @param {PayloadAction<any>} action - The action object containing the error.
      */
     productsFailure: (state, action: PayloadAction<any>) => {
       state.error = action.payload;
+    },
+    setCategoriesData: (state, action: PayloadAction<ProductsState>) => {
+      state.data = action.payload.data;
     },
   },
   extraReducers: (builder) => {
@@ -82,4 +85,4 @@ export const { productsLoading, productsSuccess, productsFailure } = productsSli
 /**
  * The reducer function for the products slice.
  */
-export const productseReducer = productsSlice.reducer;
+export const productsReducer = productsSlice.reducer;
