@@ -47,6 +47,7 @@ type InputProps = {
   numberOfLines?: number;
   startIconName?: string;
   endIconName?: string;
+  testID?: string;
 }
 
 /**
@@ -76,6 +77,7 @@ const Input = ({
   numberOfLines,
   startIconName,
   endIconName,
+  testID,
 }:InputProps):JSX.Element => {
   const { containerStyle, inputStyle } = styles;
 
@@ -97,6 +99,7 @@ const Input = ({
         secureTextEntry={secureTextEntry}
         maxLength={maxLength}
         numberOfLines={numberOfLines}
+        testID={testID}
       />
       {children}
       {endIconName && <Icon name={endIconName} />}

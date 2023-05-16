@@ -21,6 +21,7 @@ type ButtonProps = {
   startIconName?: string;
   endIconName?: string;
   iconSize?: number;
+  testID?: string;
 };
 
 /**
@@ -29,12 +30,13 @@ type ButtonProps = {
  * @param {BackButtonProps} props - Properties for the component.
  * @returns {JSX.Element} - A touchable opacity component with an image or Icon inside.
  */
-const Button = ({ children, onPress, style, btnTextStyle, color,  startIconName, endIconName, iconSize }: ButtonProps): JSX.Element => {
+const Button = ({ children, onPress, style, btnTextStyle, color,  startIconName, endIconName, iconSize, testID }: ButtonProps): JSX.Element => {
   const { buttonStyle, textstyle } = styles;
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[buttonStyle, style]}
+      testID={testID}
       >
      {startIconName && <Icon name={startIconName} color={color} size={iconSize} />}
       <Text style={[textstyle, btnTextStyle]}>{children}</Text>

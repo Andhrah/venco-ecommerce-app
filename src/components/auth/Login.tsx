@@ -45,7 +45,7 @@ const Login = (props: any):JSX.Element => {
       );
     } else {
       return (
-        <Button onPress={handleLogin}>Sign in</Button>
+        <Button testID="sign-in-button" onPress={handleLogin}>Sign in</Button>
       );
     }
   };
@@ -101,6 +101,7 @@ const Login = (props: any):JSX.Element => {
         <Input
           startIconName="at-line"
           placeholder="Email ID"
+          testID="email-input"
           onChangeText={text => {
             setEmail(text);
             dispatch(loginFailure(null));
@@ -110,6 +111,7 @@ const Login = (props: any):JSX.Element => {
           startIconName="lock-line"
           placeholder="Password"
           secureTextEntry={true}
+          testID="password-input"
           onChangeText={text => {
             setPassword(text);
             dispatch(loginFailure(null));
